@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>*.png->*.jpg</title>
+</head>
+<body>
+    <div style="width: 100%; text-align: center; margin-top: 15%;">
+        <h1>Welcome to .png->.jpg transformer!</h1>
+        <form>
+            <input type="file" name="fileInput" id="fileInput" accept=".png">
+            <button id="sendFileBtn">Transrorm file!</button>
+        </form>
+    </div>
+    <hr>
+    <div id="container">
+        <h3>Socket messages:</h3>
+    </div>
+
+
+    <script type="text/javascript">
+        let webSocket;
+        function initWS() {
+            const socket = new WebSocket(`ws://${window.location.host}/ws`);
+            const container = document.getElementById('container');
+            
+            socket.onopen = () => {
+                container.innerHTML += "<p>Socket opened</p>";
+            };
+            
+            socket.onmessage = (e) => {
+                container.innerHTML += `<p>Mesage from server: ${e.data}</p>`;
+                // container.innerHTML += `<img src="${e.data}"></img>`;
+            }
+            
+            socket.onclose = () => {
+                container.innerHTML += "<p>Socket closed</p>";
+            }
+            
+            return socket;
+        }
+        
+        if (window.WebSocket === undefined) {
+            document.getElementById('container').append("Your browser does not support WebSockets");
+        } else {
+            webSocket = initWS();
+        }
+        
+        const sendFileBtn = document.getElementById('sendFileBtn');
+        sendFileBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            let file = document.getElementById('fileInput').files[0];
+            if (file) {
+                webSocket.send(document.getElementById('fileInput').files[0]);
+            } else {
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
