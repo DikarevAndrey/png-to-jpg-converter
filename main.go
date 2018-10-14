@@ -72,5 +72,5 @@ func main() {
 	http.HandleFunc("/", rootHandler)
 
 	fmt.Println("Server is listening...")
-	http.ListenAndServe("localhost:8181", nil)
+	http.ListenAndServe("localhost:3000", nil)
 }
