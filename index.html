@@ -5,10 +5,10 @@
 </head>
 <body>
     <div style="width: 100%; text-align: center; margin-top: 15%;">
-        <h1>Welcome to .png->.jpg transformer!</h1>
+        <h1>Welcome to .png->.jpg converter!</h1>
         <form>
             <input type="file" name="fileInput" id="fileInput" accept=".png">
-            <button id="sendFileBtn">Transform file!</button>
+            <button id="sendFileBtn">Convert image!</button>
         </form>
     </div>
     <hr>
@@ -16,21 +16,18 @@
         <h3>Socket messages:</h3>
     </div>
 
-
     <script type="text/javascript">
         let webSocket;
         function initWS() {
             const socket = new WebSocket(`wss://${window.location.host}/ws`);
-            // const socket = new WebSocket(`ws://${window.location.host}/ws`);
             const container = document.getElementById('container');
             
             socket.onopen = () => {
                 container.innerHTML += "<p>Socket opened</p>";
             };
             
-            socket.onmessage = (e) => {
-                container.innerHTML += `<p>Mesage from server: ${e.data}</p>`;
-                // container.innerHTML += `<img src="${e.data}"></img>`;
+            socket.onmessage = (message) => {
+                container.innerHTML += `<h3><a href="${message.data}">Your converted image.</a></h3>`;
             }
             
             socket.onclose = () => {
@@ -51,7 +48,7 @@
             event.preventDefault();
             let file = document.getElementById('fileInput').files[0];
             if (file) {
-                webSocket.send(document.getElementById('fileInput').files[0]);
+                webSocket.send(file);
             } else {
                 return false;
             }

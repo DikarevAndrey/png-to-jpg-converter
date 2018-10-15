@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const transformAPIURL = "http://localhost:8182/"
+const convertAPIURL = "http://142.93.174.191:3000/api/convert"
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
@@ -34,28 +34,25 @@ func sockConnectionHandler(conn *websocket.Conn) {
 		msgType, data, err := conn.ReadMessage()
 		if err != nil {
 			fmt.Println(err)
-			conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 			return
 		}
-		conn.WriteMessage(websocket.TextMessage, []byte("Server received data."))
 		if msgType != websocket.BinaryMessage {
-			conn.WriteMessage(websocket.TextMessage, []byte("Invalid data format."))
+			fmt.Println("Invalid message type.")
 			continue
 		}
 
-		transformedImageURL, err := getTransformedImageURL(data)
+		convertedImageURL, err := getConvertedImageURL(data)
 		if err != nil {
 			fmt.Println(err)
-			conn.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 			return
 		}
-		conn.WriteMessage(websocket.TextMessage, transformedImageURL)
+		conn.WriteMessage(websocket.TextMessage, convertedImageURL)
 	}
 }
 
-func getTransformedImageURL(data []byte) ([]byte, error) {
+func getConvertedImageURL(data []byte) ([]byte, error) {
 	r := bytes.NewReader(data)
-	resp, err := http.Post(transformAPIURL, "image/png", r)
+	resp, err := http.Post(convertAPIURL, "image/png", r)
 	if err != nil {
 		return nil, err
 	}
@@ -73,5 +70,4 @@ func main() {
 
 	fmt.Println("Server is listening...")
 	http.ListenAndServe(":3000", nil)
-	// http.ListenAndServeTLS(":3000", "server.crt", "server.key", nil)
 }
