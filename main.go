@@ -26,10 +26,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go connectionHandler(conn)
+	go sockConnectionHandler(conn)
 }
 
-func connectionHandler(conn *websocket.Conn) {
+func sockConnectionHandler(conn *websocket.Conn) {
 	for {
 		msgType, data, err := conn.ReadMessage()
 		if err != nil {
@@ -72,5 +72,6 @@ func main() {
 	http.HandleFunc("/", rootHandler)
 
 	fmt.Println("Server is listening...")
-	http.ListenAndServe("localhost:3000", nil)
+	http.ListenAndServe(":3000", nil)
+	// http.ListenAndServeTLS(":3000", "server.crt", "server.key", nil)
 }

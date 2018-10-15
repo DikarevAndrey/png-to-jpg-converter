@@ -13,5 +13,6 @@ func main() {
 	http.HandleFunc("/", rootHandler)
 
 	fmt.Println("Server is listening...")
-	http.ListenAndServe("localhost:8182", nil)
+	// http.ListenAndServeTLS(":8182", "server.crt", "server.key", nil)
+	http.ListenAndServe(":8182", nil)
 }
